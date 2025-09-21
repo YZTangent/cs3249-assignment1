@@ -236,9 +236,8 @@ class Moderator:
             "crisis": """I'm deeply concerned about what you're sharing. Your safety is my top priority, and I want you to know that help is available right now. It sounds like you are in a lot of pain, and it takes a lot of courage to talk about it. You are not alone, and there are people who want to support you through this.
 
 Please reach out to trained crisis counselors immediately:
-- National Suicide Prevention Lifeline: 988 (24/7)
-- Crisis Text Line: Text HOME to 741741
-- The Trevor Project: 1-866-488-7386 (for LGBTQ youth)
+- Samaritans of Singapore hotline: 1767 (24/7)
+- Singapore Association for Mental Health (SAMH) Helpline: 1800-283-7019
 
 These services are free, confidential, and available 24/7. The people on the other end are trained to listen and help you through this. Please, make the call. Your life is valuable, and you deserve support.""",
             "medical": """I understand you're looking for medical guidance, and I appreciate you reaching out. However, I'm not qualified to provide medical diagnoses or treatment recommendations. My purpose is to offer emotional support and a safe space to talk, not to act as a medical professional. Your health and safety are too important for me to give advice that I'm not qualified to give.
@@ -252,10 +251,10 @@ While I can't give medical advice, I am here to listen to your concerns and help
             "harmful": """I cannot and will not provide assistance with that request as it could potentially cause harm. My purpose is to create a safe and supportive environment, and that means I cannot engage in conversations about violence, illegal activities, or harassment. Promoting or assisting with harmful acts goes against my core principles.
 
 I am programmed to refuse requests that could endanger individuals or groups. This is a strict boundary that I cannot cross. Instead, I would like to redirect our conversation to a more constructive topic. We can discuss coping with anger, managing stress, or finding healthy ways to deal with difficult situations. My goal is to be a positive and helpful resource, and I can only do that if we stay within safe and ethical boundaries.""",
-            "disclaimer": """Welcome to the Psychological Pre-Consultation Support System.
+            "disclaimer": """Welcome to PsychPal, your friendly Psychological Pre-Consultation Support System!
 
 IMPORTANT DISCLAIMER:
-This is an AI support system designed to provide initial emotional support and guidance. Please note:
+I am an AI support system designed to provide initial emotional support and guidance. Please note:
 - I am an AI, not a human. My responses are generated based on patterns in data.
 - I am not a substitute for a licensed therapist, counselor, or medical professional.
 - I cannot diagnose conditions, prescribe medication, or provide treatment.
@@ -263,7 +262,7 @@ This is an AI support system designed to provide initial emotional support and g
 - I am a tool to help you explore your feelings, not a crisis service.
 
 When to Seek Immediate Help:
-If you are in immediate danger or having thoughts of harming yourself or others, please contact a crisis hotline or emergency services immediately. You can call 988 in the US and Canada to reach the Suicide & Crisis Lifeline.
+If you are in immediate danger or having thoughts of harming yourself or others, please contact a crisis hotline or emergency services immediately. You can call 1767 in Singapore to reach the Samaritans of Singapore hotline.
 
 What I Can Offer:
 - A safe space to talk about your feelings and concerns.
@@ -272,7 +271,7 @@ What I Can Offer:
 - Support in identifying your needs and goals for mental wellness.
 - Guidance on how to seek professional help.
 
-Your wellbeing is important. How can I support you today?""",
+Your wellbeing is important. Allow me to lend a listening ear to your problems!""",
         }
 
     def moderate(
