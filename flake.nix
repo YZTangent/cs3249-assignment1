@@ -18,12 +18,9 @@
           colorama
           tqdm
 
-          numpy
-          pandas
-          matplotlib
-          scikit-image
-
-          uv
+          fastapi
+          uvicorn
+          streamlit
         ]);
       commonPackages = with pkgs; [
         # libGL glibc glib 
