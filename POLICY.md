@@ -21,25 +21,30 @@ This document defines the safety boundaries and moderation policies for the psyc
 # Student Implementation Required:
 # Minimum 20 keywords covering various crisis expressions
 CRISIS_KEYWORDS = [
-    # Direct suicide mentions (examples - add more keywords):
-    "suicide", "end my life",
+    # Direct suicide/self-harm mentions
+    "suicide", "end my life", "kill myself", "kms",  "suicidal", "ending it all",
+    "want to die", "don't want to live", "overdose", "hang myself",
+
+    # Self-harm expressions
+    "hurt myself", "self-harm", "cut myself",
     
-    # Self-harm expressions (examples - add more keywords):
-    "hurt myself", "self-harm",
+    # Immediate danger indicators
+    "goodbye forever", "final message", "can't go on", "no reason to live", "it's over", "it's joever", "pointless",
     
-    # Imminent danger indicators (examples - add more keywords):
-    "goodbye forever", "final message",
-    
-    # TODO: Add more keywords to reach minimum 20
+    # Emotional crisis expressions
+    "hopeless", "desperate", "unbearable pain", "trapped", "worthless", "burden"
 ]
 
 # Minimum 8 regex patterns for complex expressions
 CRISIS_PATTERNS = [
-    # Example patterns (add more regex patterns):
     r"\b(want|going|plan|ready) to (die|kill|hurt|end)\b",
     r"\b(thinking|thought) about (suicide|dying|ending it)\b",
-    
-    # TODO: Add more patterns to reach minimum 8
+    r"\b(no|any) (reason|point) to (live|continue)\b",
+    r"\b(tonight|tomorrow) i (will|am going to)\b",
+    r"\b(can't|cannot) (take|handle|do) this anymore\b",
+    r"\b(wish|wishing) i was (dead|gone)\b",
+    r"\b(my|the) final (plan|act|goodbye)\b",
+    r"\b(better off) (dead|gone)\b"
 ]
 ```
 
@@ -48,14 +53,14 @@ CRISIS_PATTERNS = [
 **Example Response Template (Complete this with 150-200 words)**: 
 
 ```text
-I'm deeply concerned about what you're sharing. Your safety is my top priority, and I want you to know that help is available right now.
+I'm deeply concerned about what you're sharing. Your safety is my top priority, and I want you to know that help is available right now. It sounds like you are in a lot of pain, and it takes a lot of courage to talk about it. You are not alone, and there are people who want to support you through this.
 
 Please reach out to trained crisis counselors immediately:
 - National Suicide Prevention Lifeline: 988 (24/7)
 - Crisis Text Line: Text HOME to 741741
+- The Trevor Project: 1-866-488-7386 (for LGBTQ youth)
 
-[TODO: Add 2-3 more sentences of supportive content]
-[TODO: Add encouraging closing statement]
+These services are free, confidential, and available 24/7. The people on the other end are trained to listen and help you through this. Please, make the call. Your life is valuable, and you deserve support.
 ```
 
 #### 1.2 Medical Requests
@@ -71,24 +76,28 @@ Please reach out to trained crisis counselors immediately:
 # Student Implementation Required:
 # Minimum 20 keywords
 MEDICAL_INDICATORS = [
-    # Diagnosis requests (add more keywords):
-    "diagnose", "what condition",
+    # Diagnosis requests
+    "diagnose", "what condition", "do I have", "symptoms of", "am I sick", "what is wrong with me",
+    "undiagnosed", "self-diagnose", "medical opinion",
     
-    # Medication/treatment (add more keywords):
-    "medication", "what pills",
+    # Medication/treatment
+    "medication", "what pills", "prescription", "treatment", "therapy", "cure", "medicine", "dosage",
+    "side effects", "drug", "pharmacy",
     
-    # Mental health specific (add more keywords):
-    "am i depressed", "bipolar",
-    
-    # TODO: Add more keywords to reach minimum 20
+    # Mental health specific
+    "am i depressed", "bipolar", "anxiety disorder", "ocd", "ptsd", "schizophrenia", "adhd"
 ]
 
 # Minimum 8 regex patterns for complex expressions
 MEDICAL_PATTERNS = [
     r"\b(prescribe|recommend|suggest) (medication|pills|drugs)\b",
     r"\bwhat (medication|medicine|pills) should i take\b",
-
-    # TODO: Add more patterns to reach minimum 8
+    r"\b(can you|should i) get a (prescription|refill)\b",
+    r"\b(is this|are these) a symptom of\b",
+    r"\b(how to|can I) treat my\b",
+    r"\b(what is the|tell me the) (diagnosis|prognosis)\b",
+    r"\b(i think|believe) i have (a|an) [a-zA-Z\s]+ disorder\b",
+    r"\b(need|require|looking for) (a|an) (doctor|therapist|psychiatrist)\b"
 ]
 ```
 
@@ -97,14 +106,14 @@ MEDICAL_PATTERNS = [
 **Response Template (Complete with structured format)**: 
 
 ```text
-I understand you're looking for medical guidance, and I appreciate you reaching out. However, I'm not qualified to provide medical diagnoses or treatment recommendations.
-
-[TODO: Add acknowledgment of specific concern if appropriate]
+I understand you're looking for medical guidance, and I appreciate you reaching out. However, I'm not qualified to provide medical diagnoses or treatment recommendations. My purpose is to offer emotional support and a safe space to talk, not to act as a medical professional. Your health and safety are too important for me to give advice that I'm not qualified to give.
 
 For your health and safety, please consult with:
 - A licensed psychiatrist for medication questions
+- A primary care physician for general health concerns
+- A licensed therapist or counselor for mental health support
 
-[TODO: Add 2-3 sentences about what you CAN offer]
+While I can't give medical advice, I am here to listen to your concerns and help you explore your feelings. We can talk about the stress you're feeling, coping strategies, or how to find the right professional help.
 ```
 
 #### 1.3 Harmful Content
@@ -119,18 +128,15 @@ For your health and safety, please consult with:
 # Student Implementation Required:
 HARMFUL_CATEGORIES = {
     "violence": [
-        "attack", "revenge",
-        # TODO: Add more keywords
+        "attack", "revenge", "kill", "murder", "assault", "bomb", "shoot", "terrorist", "weapon", "fight", "harm someone"
     ],
     
     "illegal": [
-        "buy drugs", "sell drugs", 
-        # TODO: Add more keywords
+        "buy drugs", "sell drugs", "illegal substances", "shoplift", "steal", "hack", "phish", "scam", "fraud", "money launder"
     ],
     
     "harassment": [
-        "hate speech", "discriminate",
-        # TODO: Add more keywords
+        "hate speech", "discriminate", "bully", "threaten", "dox", "stalk", "intimidate", "racist", "sexist", "homophobic"
     ]
 }
 ```
@@ -140,9 +146,9 @@ HARMFUL_CATEGORIES = {
 **Example Response Template (Complete this with 150-200 words)**: 
 
 ```text
-I cannot and will not provide assistance with that request as it could potentially cause harm.
+I cannot and will not provide assistance with that request as it could potentially cause harm. My purpose is to create a safe and supportive environment, and that means I cannot engage in conversations about violence, illegal activities, or harassment. Promoting or assisting with harmful acts goes against my core principles.
 
-[TODO: Add clear boundary statement and redirect to appropriate topics]
+I am programmed to refuse requests that could endanger individuals or groups. This is a strict boundary that I cannot cross. Instead, I would like to redirect our conversation to a more constructive topic. We can discuss coping with anger, managing stress, or finding healthy ways to deal with difficult situations. My goal is to be a positive and helpful resource, and I can only do that if we stay within safe and ethical boundaries.
 ```
 
 #### 1.4 Supportive Dialogue
@@ -157,7 +163,11 @@ SUPPORTIVE_TOPICS = [
     "work-life balance",
     "anxiety coping",
     "grief and loss",
-    # TODO: Add at least 5 more acceptable topics
+    "personal growth",
+    "mindfulness",
+    "self-esteem",
+    "loneliness",
+    "academic pressure"
 ]
 ```
 
@@ -191,15 +201,15 @@ CONFIDENCE_THRESHOLDS = {
     },
     "balanced": {
         # Balanced approach for production use
-        "crisis": , # TODO: Add confidence
-        "medical": , # TODO: Add confidence 
-        "harmful": , # TODO: Add confidence 
+        "crisis": 0.5,
+        "medical": 0.6,
+        "harmful": 0.7
     },
     "permissive": {
         # Minimum filtering - only clear violations
-        "crisis": , # TODO: Add confidence 
-        "medical": , # TODO: Add confidence 
-        "harmful": , # TODO: Add confidence
+        "crisis": 0.7,
+        "medical": 0.8,
+        "harmful": 0.9
     }
 }
 ```
@@ -214,48 +224,55 @@ CONFIDENCE_THRESHOLDS = {
 
 ```python
 RESPONSE_TEMPLATES = {
-    "crisis": """
-I'm deeply concerned about what you're sharing. Your safety is my top priority, and I want you to know that help is available right now.
+    "crisis": '''
+I'm deeply concerned about what you're sharing. Your safety is my top priority, and I want you to know that help is available right now. It sounds like you are in a lot of pain, and it takes a lot of courage to talk about it. You are not alone, and there are people who want to support you through this.
 
 Please reach out to trained crisis counselors immediately:
 - National Suicide Prevention Lifeline: 988 (24/7)
 - Crisis Text Line: Text HOME to 741741
+- The Trevor Project: 1-866-488-7386 (for LGBTQ youth)
 
-[TODO: Add 2-3 more sentences of supportive content]
-[TODO: Add encouraging closing statement]
-    """,
+These services are free, confidential, and available 24/7. The people on the other end are trained to listen and help you through this. Please, make the call. Your life is valuable, and you deserve support.
+    ''',
     
-    "medical": """
-I understand you're looking for medical guidance, and I appreciate you reaching out. However, I'm not qualified to provide medical diagnoses or treatment recommendations.
-
-[TODO: Add acknowledgment of specific concern if appropriate]
+    "medical": '''
+I understand you're looking for medical guidance, and I appreciate you reaching out. However, I'm not qualified to provide medical diagnoses or treatment recommendations. My purpose is to offer emotional support and a safe space to talk, not to act as a medical professional. Your health and safety are too important for me to give advice that I'm not qualified to give.
 
 For your health and safety, please consult with:
 - A licensed psychiatrist for medication questions
+- A primary care physician for general health concerns
+- A licensed therapist or counselor for mental health support
 
-[TODO: Add 2-3 sentences about what you CAN offer]
-    """,
+While I can't give medical advice, I am here to listen to your concerns and help you explore your feelings. We can talk about the stress you're feeling, coping strategies, or how to find the right professional help.
+    ''',
 
-     "harmful": """
-I cannot and will not provide assistance with that request as it could potentially cause harm.
+     "harmful": '''
+I cannot and will not provide assistance with that request as it could potentially cause harm. My purpose is to create a safe and supportive environment, and that means I cannot engage in conversations about violence, illegal activities, or harassment. Promoting or assisting with harmful acts goes against my core principles.
 
-[TODO: Add clear boundary statement and redirect to appropriate topics]
-    """,
+I am programmed to refuse requests that could endanger individuals or groups. This is a strict boundary that I cannot cross. Instead, I would like to redirect our conversation to a more constructive topic. We can discuss coping with anger, managing stress, or finding healthy ways to deal with difficult situations. My goal is to be a positive and helpful resource, and I can only do that if we stay within safe and ethical boundaries.
+    ''',
     
-    "disclaimer": """
+    "disclaimer": '''
 Welcome to the Psychological Pre-Consultation Support System.
 
 IMPORTANT DISCLAIMER:
 This is an AI support system designed to provide initial emotional support and guidance. Please note:
-[TODO: Add 4-5 bullet points about system limitations]
+- I am an AI, not a human. My responses are generated based on patterns in data.
+- I am not a substitute for a licensed therapist, counselor, or medical professional.
+- I cannot diagnose conditions, prescribe medication, or provide treatment.
+- Our conversations are not confidential in the same way as with a doctor or therapist. Please do not share sensitive personal information.
+- I am a tool to help you explore your feelings, not a crisis service.
 
 When to Seek Immediate Help:
-[TODO: Add crisis indicators and resources]
+If you are in immediate danger or having thoughts of harming yourself or others, please contact a crisis hotline or emergency services immediately. You can call 988 in the US and Canada to reach the Suicide & Crisis Lifeline.
 
 What I Can Offer:
-[TODO: Add 4-5 bullet points about available support]
+- A safe space to talk about your feelings and concerns.
+- Information about mental health topics and resources.
+- Help in exploring coping strategies for stress and anxiety.
+- Support in identifying your needs and goals for mental wellness.
+- Guidance on how to seek professional help.
 
 Your wellbeing is important. How can I support you today?
-    """
+    '''
 }
-```
