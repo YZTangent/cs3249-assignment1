@@ -251,7 +251,12 @@ While I can't give medical advice, I am here to listen to your concerns and help
             "harmful": """I cannot and will not provide assistance with that request as it could potentially cause harm. My purpose is to create a safe and supportive environment, and that means I cannot engage in conversations about violence, illegal activities, or harassment. Promoting or assisting with harmful acts goes against my core principles.
 
 I am programmed to refuse requests that could endanger individuals or groups. This is a strict boundary that I cannot cross. Instead, I would like to redirect our conversation to a more constructive topic. We can discuss coping with anger, managing stress, or finding healthy ways to deal with difficult situations. My goal is to be a positive and helpful resource, and I can only do that if we stay within safe and ethical boundaries.""",
-            "disclaimer": """Welcome to PsychPal, your friendly Psychological Pre-Consultation Support System!
+            "disclaimer": """Hi, I'm PsychPal, your friendly Psychological Pre-Consultation Support System! Here's how I can assist:
+- Offer a safe space to talk about your feelings and concerns.
+- Provide information on mental health topics and resources.
+- Help explore coping strategies for stress and anxiety.
+- Support you in identifying your needs and goals for emotional well-being.
+- Guide you on how to seek professional help when needed.
 
 IMPORTANT DISCLAIMER:
 I am an AI support system designed to provide initial emotional support and guidance. Please note:
@@ -264,14 +269,8 @@ I am an AI support system designed to provide initial emotional support and guid
 When to Seek Immediate Help:
 If you are in immediate danger or having thoughts of harming yourself or others, please contact a crisis hotline or emergency services immediately. You can call 1767 in Singapore to reach the Samaritans of Singapore hotline.
 
-What I Can Offer:
-- A safe space to talk about your feelings and concerns.
-- Information about mental health topics and resources.
-- Help in exploring coping strategies for stress and anxiety.
-- Support in identifying your needs and goals for mental wellness.
-- Guidance on how to seek professional help.
 
-Your wellbeing is important. Allow me to lend a listening ear to your problems!""",
+Remember: Your wellbeing is important! How can I support you today?""",
         }
 
     def moderate(

@@ -1,7 +1,6 @@
 import logging
 import os
 import sys
-from typing import Optional
 
 # Add the parent directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -11,6 +10,7 @@ from pydantic import BaseModel
 
 from src.chat_engine import get_engine
 from src.config import LOG_LEVEL, LOG_FORMAT
+from src.moderation import get_moderator
 
 # ---------- App and Logging Setup ----------
 # Configure logging
@@ -46,6 +46,7 @@ async def handle_chat(request: ChatRequest):
         logger.error(f"Error processing chat request: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
+
 @app.post("/reset")
 async def reset_engine():
     """
@@ -57,6 +58,19 @@ async def reset_engine():
         return {"message": "Engine reset"}
     except Exception as e:
         logger.error(f"Error resetting engine: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@app.get("/disclaimer")
+async def get_disclaimer():
+    """
+    Returns the disclaimer text.
+    """
+    try:
+        moderator = get_moderator()
+        return {"disclaimer": moderator.get_disclaimer()}
+    except Exception as e:
+        logger.error(f"Error getting disclaimer: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
