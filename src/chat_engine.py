@@ -92,34 +92,34 @@ class ChatEngine:
         
         # TODO: Handle moderation result
         if input_moderation.action == ModerationAction.BLOCK:
-            # TODO: Handle BLOCK action - Complete this section
-            # 
-            # IMPLEMENTATION STEPS:
-            # 1. Create final_response using _prepare_final_response() with:
-            #    - user_input: pass through
-            #    - model_response: {"response": "", "model": "blocked", "deterministic": True}
-            #    - input_moderation: pass through
-            #    - output_moderation: Create dummy ModerationResult with ALLOW action
-            # 2. If disclaimer exists, prepend it to the response.
-            # 3. Update conversation history (even for blocked messages).
-            # 4. Add metadata to final_response.
-            # 5. Return immediately (DO NOT continue to model generation).
-
-            pass  # DELETE this line and implement the BLOCK handling above
+            final_response = self._prepare_final_response(
+                user_input=user_input,
+                model_response={"response": "", "model": "blocked", "deterministic": True},
+                input_moderation=input_moderation,
+                output_moderation=ModerationResult(action=ModerationAction.ALLOW, tags=[], reason="", confidence=1.0),
+            )
+            if disclaimer:
+                final_response["response"] = f"{disclaimer}\n\n---\n\n{final_response['response']}"
+            self._update_history(user_input, final_response["response"])
+            final_response["latency_ms"] = int((time.time() - start_time) * 1000)
+            final_response["turn_count"] = self.turn_count
+            final_response["session_id"] = self.session_id
+            return final_response
 
         elif input_moderation.action == ModerationAction.SAFE_FALLBACK:
-            # TODO: Handle SAFE_FALLBACK action - Complete this section
-            #
-            # IMPLEMENTATION STEPS (similar to BLOCK but with different model indicator):
-            # 1. Create final_response using _prepare_final_response() with:
-            #    - model_response: {"response": "", "model": "safe_fallback", "deterministic": True}
-            #    - (other parameters same as BLOCK)
-            # 2. Add disclaimer if first interaction (same as BLOCK)
-            # 3. Update history (same as BLOCK)
-            # 4. Add metadata (same as BLOCK)
-            # 5. Return immediately without model generation
-
-            pass  # DELETE this line and implement the SAFE_FALLBACK handling above
+            final_response = self._prepare_final_response(
+                user_input=user_input,
+                model_response={"response": "", "model": "safe_fallback", "deterministic": True},
+                input_moderation=input_moderation,
+                output_moderation=ModerationResult(action=ModerationAction.ALLOW, tags=[], reason="", confidence=1.0),
+            )
+            if disclaimer:
+                final_response["response"] = f"{disclaimer}\n\n---\n\n{final_response['response']}"
+            self._update_history(user_input, final_response["response"])
+            final_response["latency_ms"] = int((time.time() - start_time) * 1000)
+            final_response["turn_count"] = self.turn_count
+            final_response["session_id"] = self.session_id
+            return final_response
         
         # Step 3: Generate model response (input passed moderation)
         model_response = self._generate_response(
@@ -305,18 +305,10 @@ class ChatEngine:
         # TODO: Check for conversation length limits
         # When MAX_CONVERSATION_TURNS is reached, add a system message to history
         if self.turn_count >= MAX_CONVERSATION_TURNS:
-            # TODO: Complete the conversation limit handling
-            # 
-            # IMPLEMENTATION STEPS:
-            # 1. Add a end-of-conversation message to conversation history:
-            #    self.conversation_history.append({
-            #        "role": "",
-            #        "content": ""
-            #    })
-            #
-            # Note: The warning message for approaching limit is already handled in _prepare_final_response()
-            
-            pass  # DELETE this line and implement the limit handling above
+            self.conversation_history.append({
+                "role": "system",
+                "content": "Conversation limit reached. Please start a new conversation."
+            })
 
         # Optional: Trim history if it exceeds window size (already implemented)
         max_history_size = CONTEXT_WINDOW_SIZE * 2  # Each turn has 2 messages
