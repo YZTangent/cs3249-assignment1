@@ -29,6 +29,22 @@
       ];
 
     in {
+      apps.x86_64-linux.default = {
+        type = "app";
+        program = "${
+            (pkgs.writeShellApplication {
+              name = "run-app";
+              runtimeInputs = commonPackages;
+              text = ''
+                #!/bin/sh
+                ollama serve &
+                python app/backend.py &
+                streamlit run app/frontend.py
+              '';
+            })
+          }/bin/run-app";
+      };
+
       devShells."x86_64-linux".default = pkgs.mkShell {
 
         packages = commonPackages;
