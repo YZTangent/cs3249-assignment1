@@ -38,6 +38,7 @@
               text = ''
                 #!/bin/sh
                 ollama serve &
+                ollama pull "phi3:mini" &
                 python app/backend.py &
                 streamlit run app/frontend.py
               '';
