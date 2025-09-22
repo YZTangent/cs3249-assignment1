@@ -4,10 +4,12 @@ Students must complete TODO sections according to POLICY.md.
 """
 
 import logging
-import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional
+
+import torch
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from .config import SAFETY_MODE
 
@@ -37,201 +39,17 @@ class Moderator:
     """Handles content moderation according to safety policy."""
 
     def __init__(self):
-        """Initialize the moderator with safety rules."""
+        """Initialize the moderator with a DistilBERT model."""
         self.safety_mode = SAFETY_MODE
-        self._initialize_rules()
-
-    def _initialize_rules(self):
-        """
-        Initialize moderation rules based on POLICY.md.
-        """
-
-        self.crisis_keywords = [
-            "suicide",
-            "end my life",
-            "kill myself",
-            "kms",
-            "self-harm",
-            "cut myself",
-            "suicidal",
-            "ending it all",
-            "want to die",
-            "don't want to live",
-            "overdose",
-            "hang myself",
-            "goodbye",
-            "forever",
-            "final message",
-            "can't go on",
-            "no reason to live",
-            "it's over",
-            "it's joever",
-            "pointless",
-            "hopeless",
-            "desperate",
-            "unbearable pain",
-            "trapped",
-            "worthless",
-            "burden",
-            "unalive myself",
-        ]
-
-        self.crisis_patterns = [
-            re.compile(
-                r"\b(want|going|plan|ready) to (die|kill|hurt|end)\b", re.IGNORECASE
-            ),
-            re.compile(
-                r"\b(thinking|thought) about (suicide|dying|ending it)\b", re.IGNORECASE
-            ),
-            re.compile(
-                r"\b(no|any) (reason|point) to (live|continue)\b", re.IGNORECASE
-            ),
-            re.compile(r"\b(tonight|tomorrow) i (will|am going to)\b", re.IGNORECASE),
-            re.compile(
-                r"""\b(can't|cannot) (take|handle|do) this anymore\b""", re.IGNORECASE
-            ),
-            re.compile(r"\b(wish|wishing) i was (dead|gone)\b", re.IGNORECASE),
-            re.compile(r"\b(my|the) final (plan|act|goodbye)\b", re.IGNORECASE),
-            re.compile(r"\b(better off) (dead|gone)\b", re.IGNORECASE),
-        ]
-
-        self.medical_keywords = [
-            "diagnose",
-            "what condition",
-            "do I have",
-            "symptoms of",
-            "am I sick",
-            "what is wrong with me",
-            "undiagnosed",
-            "self-diagnose",
-            "medical opinion",
-            "medication",
-            "what pills",
-            "prescription",
-            "treatment",
-            "therapy",
-            "cure",
-            "medicine",
-            "dosage",
-            "side effects",
-            "drug",
-            "pharmacy",
-            "am i depressed",
-            "bipolar",
-            "anxiety disorder",
-            "ocd",
-            "ptsd",
-            "schizophrenia",
-            "adhd",
-            "Adderall",
-            "Xanax",
-            "SSRI",
-            "SSRIs",
-            "Antidepressants",
-        ]
-
-        self.medical_patterns = [
-            re.compile(
-                r"\b(prescribe|recommend|suggest) (medication|pills|drugs)\b",
-                re.IGNORECASE,
-            ),
-            re.compile(
-                r"\bwhat (medication|medicine|pills) should i take\b", re.IGNORECASE
-            ),
-            re.compile(
-                r"""\b(can you|should i) get a (prescription|refill)\b""", re.IGNORECASE
-            ),
-            re.compile(r"\b(is this|are these) a symptom of\b", re.IGNORECASE),
-            re.compile(r"\b(how to|can I) treat my\b", re.IGNORECASE),
-            re.compile(
-                r"\b(what is the|tell me the) (diagnosis|prognosis)\b", re.IGNORECASE
-            ),
-            re.compile(
-                r"""\b(i think|believe) i have (a|an) [a-zA-Z\s]+ disorder\b""",
-                re.IGNORECASE,
-            ),
-            re.compile(
-                r"\b(need|require|looking for) (a|an) (doctor|therapist|psychiatrist)\b",
-                re.IGNORECASE,
-            ),
-        ]
-
-        self.harmful_content = {
-            "violence": [
-                "attack",
-                "revenge",
-                "kill",
-                "murder",
-                "assault",
-                "bomb",
-                "shoot",
-                "stab",
-                "terrorist",
-                "weapon",
-                "fight",
-                "harm someone",
-                "I am a big fan of Ted Kaczynski",
-                "kys",
-                "unalive yourself",
-            ],
-            "illegal": [
-                "buy drugs",
-                "sell drugs",
-                "illegal substances",
-                "shoplift",
-                "steal",
-                "hack",
-                "phish",
-                "scam",
-                "rape",
-                "grape",
-                "fraud",
-                "money launder",
-                "heroin",
-                "fentanyl",
-                "fent",
-                "cocaine",
-                "crack",
-                "nose candy",
-                "ketamine",
-                "methamphetamine",
-                "meth",
-                "molly",
-                "lsd",
-                "ecstasy",
-                "shrooms",
-                "acid",
-            ],
-            "harassment": [
-                "hate speech",
-                "discriminate",
-                "bully",
-                "threaten",
-                "dox",
-                "stalk",
-                "intimidate",
-                "racist",
-                "sexist",
-                "homophobic",
-                "transphobic",
-                "xenophobic",
-                "misogynistic",
-                "anti-semitic",
-                "islamophobic",
-                "ableist",
-                "ageist",
-                "slur",
-                "bigot",
-                "supremacist",
-            ],
-        }
-
+        self.tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+        self.model = AutoModelForSequenceClassification.from_pretrained(
+            "distilbert-base-uncased", num_labels=3
+        )
         self.confidence_thresholds = {
             "strict": {"crisis": 0.3, "medical": 0.4, "harmful": 0.5},
             "balanced": {"crisis": 0.5, "medical": 0.6, "harmful": 0.7},
             "permissive": {"crisis": 0.7, "medical": 0.8, "harmful": 0.9},
         }
-
         self.fallback_templates = {
             "crisis": """I'm deeply concerned about what you're sharing. Your safety is my top priority, and I want you to know that help is available right now. It sounds like you are in a lot of pain, and it takes a lot of courage to talk about it. You are not alone, and there are people who want to support you through this.
 
@@ -282,33 +100,16 @@ Remember: Your wellbeing is important! How can I support you today?""",
         """
         Perform moderation on user input and/or model output.
         """
-
-        crisis_check = self._check_crisis(user_prompt)
-        if crisis_check.action != ModerationAction.ALLOW:
-            logger.warning(f"Crisis detected: {crisis_check.reason}")
-            return crisis_check
-
-        medical_check = self._check_medical(user_prompt)
-        if medical_check.action != ModerationAction.ALLOW:
-            logger.warning(f"Medical request detected: {medical_check.reason}")
-            return medical_check
-
-        harmful_check = self._check_harmful(user_prompt)
-        if harmful_check.action != ModerationAction.ALLOW:
-            logger.warning(f"Harmful content detected: {harmful_check.reason}")
-            return harmful_check
+        content_check = self._check_content(user_prompt)
+        if content_check.action != ModerationAction.ALLOW:
+            logger.warning(f"Content detected: {content_check.reason}")
+            return content_check
 
         if model_response:
-            output_check = self._check_model_output(model_response)
+            output_check = self._check_content(model_response)
             if output_check.action != ModerationAction.ALLOW:
                 logger.warning(f"Output violation: {output_check.reason}")
                 return output_check
-
-        if context:
-            context_check = self._check_context_patterns(context)
-            if context_check.action != ModerationAction.ALLOW:
-                logger.info(f"Context concern: {context_check.reason}")
-                return context_check
 
         return ModerationResult(
             action=ModerationAction.ALLOW,
@@ -317,164 +118,49 @@ Remember: Your wellbeing is important! How can I support you today?""",
             confidence=1.0,
         )
 
-    def _check_crisis(self, text: str) -> ModerationResult:
-        text_lower = text.lower()
-        detected_keywords = []
-        confidence = 0.0
+    def _check_content(self, text: str) -> ModerationResult:
+        """
+        Check content using a DistilBERT model.
+        """
+        inputs = self.tokenizer(text, return_tensors="pt", truncation=True, padding=True)
+        outputs = self.model(**inputs)
+        logits = outputs.logits
+        probabilities = torch.softmax(logits, dim=-1)
+        confidence, predicted_class = torch.max(probabilities, dim=-1)
+
         tags = []
+        action = ModerationAction.ALLOW
+        fallback_response = None
+        reason = "Content passes all safety checks"
 
-        for keyword in self.crisis_keywords:
-            if keyword in text_lower:
-                detected_keywords.append(keyword)
-                confidence = max(confidence, 0.7)
-
-        for pattern in self.crisis_patterns:
-            if pattern.search(text_lower):
-                confidence = max(confidence, 0.9)
-                tags.append("crisis_pattern")
-
-        if detected_keywords:
-            tags.append("crisis_keyword")
-
-        threshold = self.confidence_thresholds[self.safety_mode]["crisis"]
-        if confidence >= threshold:
-            return ModerationResult(
-                action=ModerationAction.BLOCK,
-                tags=tags,
-                reason=f"Crisis indicators detected with confidence {confidence:.2f}. Keywords: {detected_keywords}",
-                confidence=confidence,
-                fallback_response=self.fallback_templates["crisis"],
-            )
-
-        return ModerationResult(
-            action=ModerationAction.ALLOW,
-            tags=[],
-            reason="No crisis indicators detected",
-            confidence=confidence,
-        )
-
-    def _check_medical(self, text: str) -> ModerationResult:
-        text_lower = text.lower()
-        detected_keywords = []
-        confidence = 0.0
-        tags = []
-
-        for keyword in self.medical_keywords:
-            if keyword in text_lower:
-                detected_keywords.append(keyword)
-                confidence = max(confidence, 0.7)
-
-        for pattern in self.medical_patterns:
-            if pattern.search(text_lower):
-                confidence = max(confidence, 0.85)
-                tags.append("medical_pattern")
-
-        if detected_keywords:
-            tags.append("medical_keyword")
-
-        threshold = self.confidence_thresholds[self.safety_mode]["medical"]
-        if confidence >= threshold:
-            return ModerationResult(
-                action=ModerationAction.SAFE_FALLBACK,
-                tags=tags,
-                reason=f"Medical request detected with confidence {confidence:.2f}. Keywords: {detected_keywords}",
-                confidence=confidence,
-                fallback_response=self.fallback_templates["medical"],
-            )
+        if predicted_class.item() == 0:  # Crisis
+            tags.append("crisis")
+            threshold = self.confidence_thresholds[self.safety_mode]["crisis"]
+            if confidence.item() >= threshold:
+                action = ModerationAction.BLOCK
+                fallback_response = self.fallback_templates["crisis"]
+                reason = f"Crisis indicators detected with confidence {confidence.item():.2f}."
+        elif predicted_class.item() == 1:  # Medical
+            tags.append("medical")
+            threshold = self.confidence_thresholds[self.safety_mode]["medical"]
+            if confidence.item() >= threshold:
+                action = ModerationAction.SAFE_FALLBACK
+                fallback_response = self.fallback_templates["medical"]
+                reason = f"Medical request detected with confidence {confidence.item():.2f}."
+        elif predicted_class.item() == 2:  # Harmful
+            tags.append("harmful")
+            threshold = self.confidence_thresholds[self.safety_mode]["harmful"]
+            if confidence.item() >= threshold:
+                action = ModerationAction.BLOCK
+                fallback_response = self.fallback_templates["harmful"]
+                reason = f"Harmful content detected with confidence {confidence.item():.2f}."
 
         return ModerationResult(
-            action=ModerationAction.ALLOW,
-            tags=[],
-            reason="No medical requests detected",
-            confidence=confidence,
-        )
-
-    def _check_harmful(self, text: str) -> ModerationResult:
-        text_lower = text.lower()
-        detected_categories = []
-        confidence = 0.0
-
-        for category, keywords in self.harmful_content.items():
-            for keyword in keywords:
-                if keyword in text_lower:
-                    if category not in detected_categories:
-                        detected_categories.append(category)
-
-        if detected_categories:
-            confidence = 0.75
-
-        threshold = self.confidence_thresholds[self.safety_mode]["harmful"]
-        if confidence >= threshold:
-            return ModerationResult(
-                action=ModerationAction.BLOCK,
-                tags=detected_categories,
-                reason=f"Harmful content detected in categories: {detected_categories}",
-                confidence=confidence,
-                fallback_response=self.fallback_templates["harmful"],
-            )
-
-        return ModerationResult(
-            action=ModerationAction.ALLOW,
-            tags=[],
-            reason="No harmful content detected",
-            confidence=confidence,
-        )
-
-    def _check_model_output(self, response: str) -> ModerationResult:
-        response = response.lower()
-
-        # Check for medical advice
-        medical_check = self._check_medical(response)
-        if medical_check.action != ModerationAction.ALLOW:
-            return ModerationResult(
-                action=ModerationAction.SAFE_FALLBACK,
-                tags=["model_medical_advice"],
-                reason="Model output contained potential medical advice.",
-                confidence=medical_check.confidence,
-                fallback_response=self.fallback_templates["medical"],
-            )
-
-        # Check for harmful suggestions
-        harmful_check = self._check_harmful(response)
-        if harmful_check.action != ModerationAction.ALLOW:
-            return ModerationResult(
-                action=ModerationAction.BLOCK,
-                tags=["model_harmful_suggestion"],
-                reason="Model output contained harmful content.",
-                confidence=harmful_check.confidence,
-                fallback_response=self.fallback_templates["medical"],
-            )
-
-        return ModerationResult(
-            action=ModerationAction.ALLOW,
-            tags=[],
-            reason="Model output is appropriate",
-            confidence=1.0,
-        )
-
-    def _check_context_patterns(self, context: List[Dict]) -> ModerationResult:
-        crisis_count = 0
-        for turn in context:
-            if turn.get("role") == "user":
-                content = turn.get("content", "").lower()
-                for keyword in self.crisis_keywords:
-                    if keyword in content:
-                        crisis_count += 1
-
-        if crisis_count >= 3:
-            return ModerationResult(
-                action=ModerationAction.SAFE_FALLBACK,
-                tags=["pattern_escalation", "repeated_crisis"],
-                reason="Escalating crisis pattern detected",
-                confidence=0.8,
-                fallback_response=self.fallback_templates["crisis"],
-            )
-
-        return ModerationResult(
-            action=ModerationAction.ALLOW,
-            tags=[],
-            reason="Conversation pattern is safe",
-            confidence=1.0,
+            action=action,
+            tags=tags,
+            reason=reason,
+            confidence=confidence.item(),
+            fallback_response=fallback_response,
         )
 
     def get_disclaimer(self) -> str:

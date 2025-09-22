@@ -21,6 +21,10 @@
           fastapi
           uvicorn
           streamlit
+
+          transformers
+          torch
+          tensorflow
         ]);
       commonPackages = with pkgs; [
         # libGL glibc glib 
